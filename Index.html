@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Equipment Reservation System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f5f9;
+      color: #222;
+    }
+    header {
+      background: #123b68;
+      color: white;
+      padding: 24px 16px;
+      text-align: center;
+    }
+    main {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 16px;
+    }
+    .card {
+      background: white;
+      padding: 18px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #0001;
+    }
+    button {
+      background: #1769aa;
+      color: white;
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover { background: #0e4d80; }
+    input, select {
+      padding: 10px;
+      margin: 5px 0 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .available { color: green; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sports Equipment Reservation System</h1>
+    <p>NVSU Sports and Development Office</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Student Reservation</h2>
+      <label>Student Name</label>
+      <input id="studentName" placeholder="Enter your full name">
+
+      <label>Select Equipment</label>
+      <select id="equipment">
+        <option>Basketball</option>
+        <option>Volleyball</option>
+        <option>Badminton Racket</option>
+        <option>Soccer Ball</option>
+      </select>
+
+      <label>Reservation Date</label>
+      <input id="date" type="date">
+
+      <button onclick="reserve()">Submit Reservation</button>
+      <p id="message"></p>
+    </section>
+
+    <section class="card">
+      <h2>Equipment Availability</h2>
+      <div id="inventory"></div>
+    </section>
+
+    <section class="card">
+      <h2>Reservation Records</h2>
+      <div id="records">No reservations yet.</div>
+    </section>
+  </main>
+
+  <script>
+    const equipmentList = [
+      { name: "Basketball", quantity: 10 },
+      { name: "Volleyball", quantity: 10 },
+      { name: "Badminton Racket", quantity: 8 },
+      { name: "Soccer Ball", quantity: 5 }
+    ];
+
+    let reservations = [];
+
+    function showInventory() {
+      document.getElementById("inventory").innerHTML =
+        equipmentList.map(item =>
+          `<p>${item.name}: <span class="available">${item.quantity} available</span></p>`
+        ).join("");
+    }
+
+    function reserve() {
+      const name = document.getElementById("studentName").value.trim();
+      const equipment = document.getElementById("equipment").value;
+      const date = document.getElementById("date").value;
+      const message = document.getElementById("message");
+
+      if (!name || !date) {
+        message.textContent = "Please enter your name and reservation date.";
+        return;
+      }
+
+      reservations.push({
+        name: name,
+        equipment: equipment,
+        date: date,
+        status: "Pending"
+      });
+
+      showRecords();
+      message.textContent = "Reservation submitted successfully!";
+      document.getElementById("studentName").value = "";
+    }
+
+    function showRecords() {
+      document.getElementById("records").innerHTML =
+        reservations.map((r, i) =>
+          `<p>${i + 1}. ${r.name} — ${r.equipment} — ${r.date} — ${r.status}</p>`
+        ).join("");
+    }
+
+    showInventory();
+  </script>
+</body>
+</html>
