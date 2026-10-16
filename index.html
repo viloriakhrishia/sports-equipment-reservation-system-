@@ -2,107 +2,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sports Equipment Reservation System</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f1f5f9;
-      color: #1e293b;
-    }
-    header {
-      background: #12345a;
-      color: white;
-      text-align: center;
-      padding: 24px 12px;
-    }
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px;
-      background: white;
-    }
-    button {
-      background: #1769aa;
-      color: white;
-      border: 0;
-      padding: 10px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    main {
-      max-width: 1000px;
-      margin: auto;
-      padding: 16px;
-    }
-    section {
-      background: white;
-      padding: 18px;
-      margin-bottom: 16px;
-      border-radius: 10px;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin: 6px 0 14px;
-      box-sizing: border-box;
-    }
-    .equipment-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
-    .item {
-      border: 1px solid #dbe3ec;
-      padding: 12px;
-      border-radius: 8px;
-    }
-    .hidden { display: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportsHub | Equipment Management</title>
+<style>
+:root{
+  --navy:#102a56;--blue:#2563eb;--light:#eaf2ff;
+  --pale:#f5f8ff;--white:#fff;--text:#1c2b45;
+  --muted:#718096;--border:#e3eaf5;--green:#13845b;
+  --red:#d64545;--orange:#bd7913;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--pale);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:245px;background:var(--navy);color:white;padding:25px 16px;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:12px;padding:0 8px 28px}
+.brand-icon{width:43px;height:43px;background:#dceaff;color:var(--navy);border-radius:13px;display:grid;place-items:center;font-size:23px}
+.brand h2{font-size:18px;margin:0}
+.brand small{display:block;color:#b8c9e8;margin-top:4px;font-size:11px}
+.nav-label{font-size:10px;color:#a9bcdf;letter-spacing:1.5px;padding:13px 12px 8px}
+.nav-btn{width:100%;border:0;background:transparent;color:#d6e2f7;text-align:left;padding:13px 12px;border-radius:10px;margin:3px 0;display:flex;gap:12px;align-items:center;font-size:13px}
+.nav-btn:hover,.nav-btn.active{background:#284775;color:white}
+.nav-btn span{font-size:17px;width:22px;text-align:center}
+.side-note{margin:35px 5px 0;padding:14px;background:#1a3968;border-radius:12px;color:#dce8ff;font-size:11px;line-height:1.7}
+.main{flex:1;min-width:0}
+.topbar{height:78px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;gap:15px}
+.topbar small{color:var(--muted)}
+.profile{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--light);color:var(--blue);display:grid;place-items:center;font-weight:800}
+.content{padding:28px 32px;max-width:1500px;margin:auto}
+.page-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.page-head h1{font-size:25px;margin:0 0 7px;color:var(--navy)}
+.page-head p{font-size:13px;color:var(--muted);margin:0}
+.btn{border:0;border-radius:9px;padding:11px 15px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn-primary{background:var(--blue);color:white}
+.btn-primary:hover{background:#194fc4}
+.btn-light{background:var(--light);color:var(--blue)}
+.btn-danger{background:#fff0f0;color:var(--red)}
+.btn-success{background:#e7f7ef;color:var(--green)}
+.btn-muted{background:#edf0f6;color:#53627a}
+.btn-sm{padding:7px 9px;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.stat{background:white;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 3px 12px #17345b06}
+.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+.stat-icon{width:39px;height:39px;border-radius:11px;background:var(--light);display:grid;place-items:center;font-size:19px}
+.stat h2{font-size:29px;margin:17px 0 5px;color:var(--navy)}
+.stat p{font-size:11px;color:var(--muted);margin:0}
+.grid-two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:18px}
+.panel{background:white;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;min-width:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px;flex-wrap:wrap}
+.panel-head h3{font-size:15px;margin:0;color:var(--navy)}
+.panel-head p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:17px}
+.search{flex:1;min-width:170px}
+input,select,textarea{width:100%;border:1px solid #dce4f0;border-radius:8px;padding:11px 12px;background:white;color:var(--text);font-size:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#7aa6ff;box-shadow:0 0 0 3px #2563eb12}
+textarea{resize:vertical;min-height:78px}
+label{display:block;font-size:11px;font-weight:700;color:#42516b;margin-bottom:7px}
+.field{margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.full{grid-column:1/-1}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
+th{text-align:left;padding:12px;background:#f7f9fd;color:#6c7a92;font-size:10px;font-weight:700}
+td{padding:13px 12px;border-bottom:1px solid #edf1f7}
+tbody tr:last-child td{border-bottom:0}
+.item-name{font-weight:700;color:var(--navy)}
+.item-sub{font-size:10px;color:var(--muted);margin-top:5px}
+.badge{display:inline-block;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#edf1f7;color:#52627a}
+.badge.green{background:#e4f7ed;color:#14764e}
+.badge.blue{background:#e7efff;color:#2459c4}
+.badge.orange{background:#fff2dc;color:#9b6209}
+.badge.red{background:#ffebeb;color:#c03838}
+.equipment-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.equipment-card{background:white;border:1px solid var(--border);border-radius:14px;padding:17px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.equip-image{height:105px;border-radius:10px;background:linear-gradient(135deg,#edf4ff,#dce9ff);display:grid;place-items:center;font-size:45px}
+.equip-title{font-size:14px;font-weight:800;color:var(--navy)}
+.equip-meta{font-size:11px;color:var(--muted);margin-top:5px}
+.equip-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
+.progress{height:6px;background:#edf1f7;border-radius:10px;overflow:hidden;margin-top:8px}
+.progress div{height:100%;background:var(--blue);border-radius:10px}
+.empty{text-align:center;padding:36px 15px;color:var(--muted);font-size:12px}
+.empty div{font-size:30px;margin-bottom:10px}
+.quick-link{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid #edf1f7}
+.quick-link:last-child{border:0}
+.quick-icon{width:39px;height:39px;border-radius:10px;background:var(--light);display:grid;place-items:center;font-size:18px}
+.quick-link strong{font-size:12px}
+.quick-link small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.quick-link .btn{margin-left:auto}
+.notice{background:#edf4ff;border:1px solid #d7e5ff;border-radius:10px;padding:13px;font-size:11px;color:#365781;line-height:1.7;margin-bottom:17px}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+.footer{padding:10px 0 25px;text-align:center;color:#8290a5;font-size:10px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:white;padding:14px 18px;border-radius:10px;font-size:12px;box-shadow:0 8px 25px #0002;z-index:100;max-width:90%;display:none}
+.modal-backdrop{position:fixed;inset:0;background:#10213c88;z-index:50;display:none;align-items:center;justify-content:center;padding:18px}
+.modal{width:min(620px,100%);max-height:90vh;overflow:auto;background:white;border-radius:16px;padding:24px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-head h2{font-size:18px;color:var(--navy);margin:0}
+.close{border:0;background:#edf2fa;border-radius:8px;padding:8px 11px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.section{display:none}
+.section.active{display:block}
+@media(max-width:1000px){
+ .sidebar{width:205px}.content{padding:22px 20px}.topbar{padding:0 20px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .equipment-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid-two{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+ .layout{display:block}.sidebar{width:100%;padding:12px;position:relative}
+ .brand{padding:0 7px 12px}.brand-icon{width:36px;height:36px}
+ .nav-label,.side-note{display:none}
+ .sidebar nav{display:flex;overflow-x:auto;gap:5px}
+ .nav-btn{width:auto;white-space:nowrap;padding:10px;font-size:11px;margin:0}
+ .nav-btn span{font-size:15px;width:auto}
+ .topbar{height:60px;padding:0 15px}.content{padding:20px 13px}
+ .page-head h1{font-size:22px}.stats{gap:10px}
+ .stat{padding:14px}.stat h2{font-size:24px}.stat-top{font-size:10px}
+ .stat-icon{width:31px;height:31px;font-size:15px}
+ .equipment-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .equipment-card{padding:11px}.equip-image{height:80px;font-size:35px}
+ .equip-title{font-size:12px}.form-grid{grid-template-columns:1fr}
+ .full{grid-column:auto}.panel{padding:14px}
+ .profile .profile-text{display:none}
+}
+</style>
 </head>
 <body>
-<header>
-  <h1>Sports Equipment Reservation System</h1>
-  <p>Sports and Development Office</p>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">🏆</div>
+    <div><h2>SportsHub</h2><small>Equipment Management</small></div>
+  </div>
+  <div class="nav-label">MAIN MENU</div>
+  <nav>
+    <button class="nav-btn active" data-page="dashboard"><span>▦</span> Dashboard</button>
+    <button class="nav-btn" data-page="inventory"><span>🏀</span> Equipment Inventory</button>
+    <button class="nav-btn" data-page="reserve"><span>＋</span> Make Reservation</button>
+    <button class="nav-btn" data-page="myreservations"><span>▤</span> My Reservations</button>
+    <button class="nav-btn" data-page="admin"><span>⚙</span> Admin Management</button>
+  </nav>
+  <div class="side-note">
+    <strong>SPORTS OFFICE</strong><br>
+    Manage equipment, reservations, borrowing, and returns in one place.
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><strong id="topTitle">Dashboard</strong><br><small>Sports Equipment Reservation System</small></div>
+  <div class="profile"><div class="avatar">SH</div><div class="profile-text">Sports Office<small style="display:block;font-weight:400;margin-top:4px">System prototype</small></div></div>
 </header>
-<nav>
-  <button onclick="showPage('inventory')">Equipment</button>
-  <button onclick="showPage('reservation')">Reservation</button>
-  <button onclick="showPage('admin')">Admin</button>
-</nav>
-<main>
-  <section id="inventory">
-    <h2>Sports Equipment Inventory</h2>
-    <div id="equipmentList" class="equipment-list"></div>
-  </section>
-  <section id="reservation" class="hidden">
-    <h2>Make a Reservation</h2>
+
+<div class="content">
+<section class="section active" id="dashboard">
+  <div class="page-head">
+    <div><h1>Dashboard Overview</h1><p>Monitor sports equipment and reservation activities.</p></div>
+    <button class="btn btn-primary" onclick="showPage('reserve')">＋ New Reservation</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-top">Total Equipment <span class="stat-icon">🏀</span></div><h2 id="statTotal">0</h2><p>Registered equipment units</p></div>
+    <div class="stat"><div class="stat-top">Available Units <span class="stat-icon">✓</span></div><h2 id="statAvailable">0</h2><p>Ready for reservation</p></div>
+    <div class="stat"><div class="stat-top">Pending Requests <span class="stat-icon">◷</span></div><h2 id="statPending">0</h2><p>Waiting for approval</p></div>
+    <div class="stat"><div class="stat-top">Currently Borrowed <span class="stat-icon">↗</span></div><h2 id="statBorrowed">0</h2><p>Units not yet returned</p></div>
+  </div>
+  <div class="grid-two">
+    <div class="panel">
+      <div class="panel-head"><div><h3>Recent Reservations</h3><p>Latest equipment requests</p></div><button class="btn btn-light btn-sm" onclick="showPage('myreservations')">View All</button></div>
+      <div class="table-wrap"><table><thead><tr><th>STUDENT</th><th>EQUIPMENT</th><th>DATE</th><th>STATUS</th></tr></thead><tbody id="recentTable"></tbody></table></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div><h3>Quick Actions</h3><p>Common tasks</p></div></div>
+      <div class="quick-link"><div class="quick-icon">📋</div><div><strong>Make a reservation</strong><small>Submit an equipment request</small></div><button class="btn btn-light btn-sm" onclick="showPage('reserve')">Open</button></div>
+      <div class="quick-link"><div class="quick-icon">📦</div><div><strong>Check inventory</strong><small>View equipment availability</small></div><button class="btn btn-light btn-sm" onclick="showPage('inventory')">Open</button></div>
+      <div class="quick-link"><div class="quick-icon">⚙️</div><div><strong>Manage requests</strong><small>Approve, reject, or process returns</small></div><button class="btn btn-light btn-sm" onclick="showPage('admin')">Open</button></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h3>Inventory Summary</h3><p>Equipment units grouped by category</p></div><button class="btn btn-light btn-sm" onclick="showPage('inventory')">View Inventory</button></div>
+    <div id="categorySummary"></div>
+  </div>
+</section>
+
+<section class="section" id="inventory">
+  <div class="page-head"><div><h1>Equipment Inventory</h1><p>Browse sports equipment and check current availability.</p></div><button class="btn btn-primary" onclick="showPage('reserve')">＋ Reserve Equipment</button></div>
+  <div class="panel">
+    <div class="toolbar">
+      <div class="search"><input id="inventorySearch" placeholder="Search equipment..." oninput="renderInventory()"></div>
+      <select id="categoryFilter" style="max-width:210px" onchange="renderInventory()">
+        <option value="">All Categories</option><option>Ball Sports</option><option>Rackets & Paddles</option><option>Nets</option><option>Training Equipment</option><option>Accessories</option>
+      </select>
+      <select id="availabilityFilter" style="max-width:180px" onchange="renderInventory()">
+        <option value="">All Availability</option><option value="available">Available</option><option value="unavailable">Unavailable</option>
+      </select>
+    </div>
+    <div id="equipmentGrid" class="equipment-grid"></div>
+  </div>
+</section>
+
+<section class="section" id="reserve">
+  <div class="page-head"><div><h1>Make a Reservation</h1><p>Fill in the details to request sports equipment.</p></div></div>
+  <div class="notice">Please check the available quantity before submitting. Your request must be approved by the Sports Office before borrowing.</div>
+  <div class="panel">
+    <div class="panel-head"><div><h3>Reservation Form</h3><p>All fields marked with * are required.</p></div></div>
     <form id="reservationForm">
-      <label>Student Name</label>
-      <input id="studentName" required>
-      <label>Student ID</label>
-      <input id="studentId" required>
-      <label>Equipment</label>
-      <select id="equipmentChoice" required></select>
-      <label>Quantity</label>
-      <input id="quantity" type="number" min="1" value="1" required>
-      <label>Reservation Date</label>
-      <input id="reservationDate" type="date" required>
-      <label>Expected Return Date</label>
-      <input id="returnDate" type="date" required>
-      <button type="submit">Submit Reservation</button>
+      <div class="form-grid">
+        <div class="field"><label for="studentName">Full Name *</label><input id="studentName" required placeholder="Enter your full name"></div>
+        <div class="field"><label for="studentId">Student ID *</label><input id="studentId" required placeholder="Enter your student ID"></div>
+        <div class="field"><label for="college">College / Program *</label><input id="college" required placeholder="e.g. BSIT - NDM"></div>
+        <div class="field"><label for="contact">Contact Number or Email</label><input id="contact" placeholder="Optional contact details"></div>
+        <div class="field full"><label for="reserveEquipment">Equipment *</label><select id="reserveEquipment" required><option value="">Select equipment</option></select></div>
+        <div class="field"><label for="reserveQty">Quantity *</label><input id="reserveQty" type="number" min="1" value="1" required></div>
+        <div class="field"><label for="purpose">Purpose / Activity *</label><input id="purpose" required placeholder="e.g. PE class, training, event"></div>
+        <div class="field"><label for="startDate">Reservation Date *</label><input id="startDate" type="date" required></div>
+        <div class="field"><label for="endDate">Return Date *</label><input id="endDate" type="date" required></div>
+        <div class="field"><label for="startTime">Start Time *</label><input id="startTime" type="time" required></div>
+        <div class="field"><label for="endTime">End Time *</label><input id="endTime" type="time" required></div>
+        <div class="field full"><label for="notes">Additional Notes</label><textarea id="notes" placeholder="Optional details about your request"></textarea></div>
+      </div>
+      <div class="actions"><button type="submit" class="btn btn-primary">Submit Reservation</button><button type="reset" class="btn btn-muted">Clear Form</button></div>
     </form>
-    <p id="message"></p>
-  </section>
-  <section id="admin" class="hidden">
-    <h2>Admin Dashboard</h2>
-    <p>Reservation requests and inventory management will appear here.</p>
-    <div id="requests"></div>
-  </section>
+  </div>
+</section>
+
+<section class="section" id="myreservations">
+  <div class="page-head"><div><h1>My Reservations</h1><p>Find requests using the student ID entered in your reservation.</p></div></div>
+  <div class="panel">
+    <div class="toolbar"><div class="search"><input id="mySearch" placeholder="Enter your student ID..." oninput="renderMyReservations()"></div><select id="myStatus" style="max-width:200px" onchange="renderMyReservations()"><option value="">All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Borrowed</option><option>Returned</option><option>Cancelled</option></select></div>
+    <div class="table-wrap"><table><thead><tr><th>REQUEST ID</th><th>EQUIPMENT</th><th>QTY</th><th>RESERVATION DATE</th><th>RETURN DATE</th><th>STATUS</th><th>ACTION</th></tr></thead><tbody id="myTable"></tbody></table></div>
+    <div id="myEmpty" class="empty"><div>🔎</div>Enter your student ID to view your requests.</div>
+  </div>
+</section>
+
+<section class="section" id="admin">
+  <div class="page-head"><div><h1>Admin Management</h1><p>Manage equipment, reservations, borrowing, and returns.</p></div><button class="btn btn-primary" onclick="openEquipmentModal()">＋ Add Equipment</button></div>
+  <div class="notice"><strong>Prototype notice:</strong> This demo has no secure admin login. Data is saved only in this browser. Do not use real personal data or rely on it for official records.</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-top">Pending <span class="stat-icon">◷</span></div><h2 id="adminPending">0</h2><p>Requests to review</p></div>
+    <div class="stat"><div class="stat-top">Approved <span class="stat-icon">✓</span></div><h2 id="adminApproved">0</h2><p>Awaiting collection</p></div>
+    <div class="stat"><div class="stat-top">Borrowed <span class="stat-icon">↗</span></div><h2 id="adminBorrowed">0</h2><p>Awaiting return</p></div>
+    <div class="stat"><div class="stat-top">Damaged Units <span class="stat-icon">!</span></div><h2 id="adminDamaged">0</h2><p>Not ready for use</p></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h3>Reservation Requests</h3><p>Approve or reject pending requests. Record equipment borrowing and returns.</p></div><select id="adminStatus" style="max-width:180px" onchange="renderAdmin()"><option value="">All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Borrowed</option><option>Returned</option><option>Cancelled</option></select></div>
+    <div class="table-wrap"><table><thead><tr><th>STUDENT / ID</th><th>EQUIPMENT</th><th>QTY</th><th>DATES</th><th>PURPOSE</th><th>STATUS</th><th>ACTIONS</th></tr></thead><tbody id="adminTable"></tbody></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h3>Manage Equipment</h3><p>Update quantities, condition, and equipment details.</p></div></div>
+    <div class="table-wrap"><table><thead><tr><th>EQUIPMENT</th><th>CATEGORY</th><th>TOTAL QTY</th><th>AVAILABLE</th><th>CONDITION</th><th>ACTIONS</th></tr></thead><tbody id="adminEquipmentTable"></tbody></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h3>Data Management</h3><p>Export a basic CSV report or reset the demo data.</p></div></div>
+    <div class="actions"><button class="btn btn-light" onclick="exportCSV()">⬇ Export Reservations CSV</button><button class="btn btn-light" onclick="exportInventory()">⬇ Export Inventory CSV</button><button class="btn btn-danger" onclick="resetDemo()">Reset Demo Data</button></div>
+  </div>
+</section>
+<div class="footer">SportsHub Equipment Management · Student Project Prototype</div>
+</div>
 </main>
-</body>
-</html>
+</div>
+
+<div class="modal-backdrop" id="equipmentModal">
+  <div class="modal">
+    <div class="modal-head"><h2 id="equipmentModalTitle">Add Equipment</h2><button class="close" onclick="closeEquipmentModal()">✕</button></div>
+    <form id="equipmentForm">
+      <input type="hidden" id="editEquipmentId">
+      <div class="field"><label for="equipmentName">Equipment Name *</label><input id="equipmentName" required></div>
+      <div class="form-grid">
+        <div class=
