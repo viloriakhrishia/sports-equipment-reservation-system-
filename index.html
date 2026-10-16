@@ -3,202 +3,166 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sports Equipment Management System</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NVSU Sports Equipment System</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#202938}
-header{background:#123b68;color:white;padding:22px;text-align:center}
-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;background:#fff;padding:12px}
-button{background:#1769aa;color:white;border:0;padding:10px 14px;border-radius:6px;cursor:pointer;margin:3px}
-button:hover{background:#104b7c}
-main{max-width:1000px;margin:20px auto;padding:12px}
-.card{background:white;border-radius:10px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px #0001}
-input,select{padding:11px;margin:5px 0 12px;width:100%;border:1px solid #ccd3dc;border-radius:5px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.status{font-weight:bold;color:#1769aa}
+body{margin:0;font:15px Arial;background:#f1f5f9;color:#1e293b}
+header{background:#123b68;color:white;padding:24px 15px;text-align:center}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;background:white;padding:12px}
+main{max-width:1050px;margin:20px auto;padding:12px}
+section,.card{background:white;padding:18px;border-radius:10px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:#eaf2ff;padding:16px;border-radius:9px}
+input,select{width:100%;padding:11px;margin:5px 0 13px;border:1px solid #cbd5e1;border-radius:6px}
+button{background:#1769aa;color:white;border:0;padding:10px 12px;border-radius:6px;margin:3px;cursor:pointer}
+table{border-collapse:collapse;width:100%;min-width:700px}
+th,td{padding:10px;text-align:left;border-bottom:1px solid #ddd}
+.wrap{overflow-x:auto}
 .hidden{display:none}
-.small{color:#657080;font-size:13px}
-table{width:100%;border-collapse:collapse}
-th,td{text-align:left;padding:9px;border-bottom:1px solid #ddd}
-.tablewrap{overflow-x:auto}
+.muted{color:#64748b;font-size:13px}
 </style>
 </head>
 <body>
 <header>
-<h1>Sports Equipment Reservation System</h1>
+<h1>Sports Equipment Management</h1>
 <p>Nueva Vizcaya State University</p>
-<p>Sports and Development Office</p>
+<p>Reservation • Borrowing • Inventory • Returns</p>
 </header>
-
 <nav>
-<button onclick="showPage('student')">Student Page</button>
-<button onclick="showPage('admin')">Admin Dashboard</button>
+<button onclick="page('student')">Student Page</button>
+<button onclick="page('admin')">Admin Dashboard</button>
 </nav>
-
 <main>
-<section id="student">
-<div class="card">
-<h2>Make a Reservation</h2>
-<label>Student Name</label>
-<input id="studentName" placeholder="Enter your full name">
-<label>Student ID</label>
-<input id="studentId" placeholder="Enter your student ID">
-<label>Equipment</label>
-<select id="equipment"></select>
-<label>Reservation Date</label>
-<input id="date" type="date">
-<button onclick="reserve()">Submit Reservation</button>
-<p id="studentMessage"></p>
-</div>
-
-<div class="card">
-<h2>Available Sports Equipment</h2>
+<div id="student">
+<section>
+<h2>Equipment Availability</h2>
 <div id="inventory" class="grid"></div>
-</div>
-
-<div class="card">
-<h2>My Reservation Records</h2>
-<label>Enter your Student ID to view records</label>
-<input id="searchId" placeholder="Student ID">
-<button onclick="myRecords()">View My Records</button>
-<div id="myRecords"></div>
-</div>
 </section>
+<section>
+<h2>Make a Reservation</h2>
+<label>Student Name</label><input id="name" placeholder="Full name">
+<label>Student ID</label><input id="sid" placeholder="Student ID">
+<label>Equipment</label><select id="item"></select>
+<label>Quantity</label><input id="qty" type="number" min="1" value="1">
+<label>Reservation Date</label><input id="date" type="date">
+<label>Expected Return Date</label><input id="due" type="date">
+<button onclick="reserve()">Submit Reservation</button>
+<p id="msg"></p>
+</section>
+<section>
+<h2>Check My Reservations</h2>
+<label>Student ID</label><input id="lookup" placeholder="Enter your Student ID">
+<button onclick="lookup()">Search Records</button>
+<div id="mine"></div>
+</section>
+</div>
 
-<section id="admin" class="hidden">
-<div class="card">
+<div id="admin" class="hidden">
+<section>
 <h2>Admin Dashboard</h2>
-<p class="small">Prototype demonstration only. This page does not have secure administrator login.</p>
-<div id="summary"></div>
-</div>
-
-<div class="card">
-<h2>Manage Equipment</h2>
-<label>Equipment Name</label>
-<input id="newName" placeholder="e.g. Tennis Racket">
-<label>Quantity</label>
-<input id="newQty" type="number" min="0" placeholder="Quantity">
-<button onclick="addEquipment()">Add Equipment</button>
-<div id="adminInventory"></div>
-</div>
-
-<div class="card">
-<h2>Reservation Requests and Borrowing Records</h2>
-<div id="adminRecords"></div>
-</div>
+<p class="muted">Prototype only: no secure admin login. Records are stored temporarily in this browser session.</p>
+<div id="stats" class="grid"></div>
 </section>
+<section>
+<h2>Add Equipment</h2>
+<label>Equipment Name</label><input id="newName" placeholder="e.g. Tennis Racket">
+<label>Total Quantity</label><input id="newQty" type="number" min="0" placeholder="Quantity">
+<button onclick="addItem()">Add Equipment</button>
+<div id="manage"></div>
+</section>
+<section>
+<h2>Reservation, Borrowing and Return Records</h2>
+<div class="wrap" id="records"></div>
+</section>
+</div>
 </main>
-
 <script>
-let items=[
-{name:"Basketball",qty:10},
-{name:"Volleyball",qty:10},
-{name:"Badminton Racket",qty:8},
-{name:"Soccer Ball",qty:5}
+let equipment=[
+{name:"Basketball",total:10,condition:"Good"},
+{name:"Volleyball",total:10,condition:"Good"},
+{name:"Badminton Racket",total:8,condition:"Good"},
+{name:"Soccer Ball",total:5,condition:"Good"}
 ];
-let records=[];
-let nextId=1;
+let requests=[],seq=1;
 
-function showPage(page){
-document.getElementById("student").classList.toggle("hidden",page!=="student");
-document.getElementById("admin").classList.toggle("hidden",page!=="admin");
+function available(x){
+let used=requests.filter(r=>r.item===x.name&&["Approved","Borrowed"].includes(r.status))
+.reduce((sum,r)=>sum+r.qty,0);
+return Math.max(0,x.total-used);
+}
+function page(p){
+document.getElementById("student").classList.toggle("hidden",p!=="student");
+document.getElementById("admin").classList.toggle("hidden",p!=="admin");
 render();
 }
-
 function render(){
-const select=document.getElementById("equipment");
-const old=select.value;
-select.innerHTML=items.map(x=>`<option>${x.name}</option>`).join("");
-if(items.some(x=>x.name===old))select.value=old;
-
-document.getElementById("inventory").innerHTML=items.map(x=>{
-const borrowed=records.filter(r=>r.equipment===x.name&&r.status==="Borrowed").length;
-return `<div class="card"><h3>${x.name}</h3><p>Quantity: ${x.qty}</p><p>Currently borrowed: ${borrowed}</p><p class="status">${Math.max(0,x.qty-borrowed)} available</p></div>`;
-}).join("")||"No equipment added yet.";
-
-document.getElementById("summary").innerHTML=
-`<div class="grid">
-<div class="card"><h3>${items.length}</h3>Equipment types</div>
-<div class="card"><h3>${records.length}</h3>Total reservations</div>
-<div class="card"><h3>${records.filter(r=>r.status==="Pending").length}</h3>Pending requests</div>
-<div class="card"><h3>${records.filter(r=>r.status==="Borrowed").length}</h3>Currently borrowed</div>
-</div>`;
-
-document.getElementById("adminInventory").innerHTML=
-`<div class="tablewrap"><table><tr><th>Equipment</th><th>Quantity</th><th>Action</th></tr>`+
-items.map((x,i)=>`<tr><td>${x.name}</td><td>${x.qty}</td><td><button onclick="removeEquipment(${i})">Remove</button></td></tr>`).join("")+
-`</table></div>`;
-
-document.getElementById("adminRecords").innerHTML=records.length?
-`<div class="tablewrap"><table><tr><th>Student</th><th>ID</th><th>Equipment</th><th>Date</th><th>Status</th><th>Action</th></tr>`+
-records.map(r=>`<tr><td>${r.name}</td><td>${r.sid}</td><td>${r.equipment}</td><td>${r.date}</td><td>${r.status}</td><td>${actions(r)}</td></tr>`).join("")+
-`</table></div>`:"No reservation requests yet.";
+document.getElementById("inventory").innerHTML=equipment.map(x=>
+`<div class="stat"><h3>${x.name}</h3><p>Total: ${x.total}</p><p>Available: <b>${available(x)}</b></p><p>Condition: ${x.condition}</p></div>`).join("");
+let sel=document.getElementById("item"),old=sel.value;
+sel.innerHTML=equipment.map(x=>`<option>${x.name}</option>`).join("");
+if(equipment.some(x=>x.name===old))sel.value=old;
+document.getElementById("stats").innerHTML=[
+["Equipment types",equipment.length],
+["Total units",equipment.reduce((s,x)=>s+x.total,0)],
+["Available units",equipment.reduce((s,x)=>s+available(x),0)],
+["Pending requests",requests.filter(r=>r.status==="Pending").length],
+["Borrowed transactions",requests.filter(r=>r.status==="Borrowed").length],
+["Overdue returns",requests.filter(r=>r.status==="Borrowed"&&r.due<today()).length]
+].map(x=>`<div class="stat"><h3>${x[1]}</h3>${x[0]}</div>`).join("");
+document.getElementById("manage").innerHTML=`<div class="wrap"><table><tr><th>Equipment</th><th>Total</th><th>Available</th><th>Condition</th><th>Action</th></tr>`+
+equipment.map((x,i)=>`<tr><td>${x.name}</td><td>${x.total}</td><td>${available(x)}</td><td><select onchange="condition(${i},this.value)"><option ${x.condition==="Good"?"selected":""}>Good</option><option ${x.condition==="Damaged"?"selected":""}>Damaged</option><option ${x.condition==="Under Maintenance"?"selected":""}>Under Maintenance</option></select></td><td><button onclick="removeItem(${i})">Remove</button></td></tr>`).join("")+"</table></div>";
+document.getElementById("records").innerHTML=requests.length?
+`<table><tr><th>Student</th><th>ID</th><th>Equipment</th><th>Qty</th><th>Reserved</th><th>Return Due</th><th>Status</th><th>Action</th></tr>`+
+requests.map(r=>`<tr><td>${r.name}</td><td>${r.sid}</td><td>${r.item}</td><td>${r.qty}</td><td>${r.date}</td><td>${r.due}</td><td>${r.status}${r.status==="Borrowed"&&r.due<today()?" (OVERDUE)":""}</td><td>${actions(r)}</td></tr>`).join("")+"</table>":"No records yet.";
 }
-
+function today(){return new Date().toISOString().slice(0,10)}
+function reserve(){
+let name=document.getElementById("name").value.trim(),sid=document.getElementById("sid").value.trim(),item=document.getElementById("item").value,qty=Number(document.getElementById("qty").value),date=document.getElementById("date").value,due=document.getElementById("due").value;
+if(!name||!sid||!date||!due||!Number.isInteger(qty)||qty<1){alert("Complete all fields and enter a valid quantity.");return}
+if(date<today()||due<date){alert("Choose a valid reservation and return date.");return}
+let x=equipment.find(x=>x.name===item);
+if(!x||qty>available(x)){alert("Not enough equipment available.");return}
+requests.push({id:seq++,name,sid,item,qty,date,due,status:"Pending",returned:null});
+document.getElementById("msg").textContent="Reservation submitted. Waiting for admin approval.";
+render();
+}
 function actions(r){
-if(r.status==="Pending")return `<button onclick="changeStatus(${r.id},'Approved')">Approve</button><button onclick="changeStatus(${r.id},'Rejected')">Reject</button>`;
-if(r.status==="Approved")return `<button onclick="changeStatus(${r.id},'Borrowed')">Mark Borrowed</button>`;
-if(r.status==="Borrowed")return `<button onclick="changeStatus(${r.id},'Returned')">Mark Returned</button>`;
+if(r.status==="Pending")return `<button onclick="status(${r.id},'Approved')">Approve</button><button onclick="status(${r.id},'Rejected')">Reject</button>`;
+if(r.status==="Approved")return `<button onclick="status(${r.id},'Borrowed')">Mark Borrowed</button><button onclick="status(${r.id},'Rejected')">Cancel</button>`;
+if(r.status==="Borrowed")return `<button onclick="returned(${r.id})">Mark Returned</button>`;
+if(r.status==="Returned")return "Returned: "+r.returned;
 return "-";
 }
-
-function reserve(){
-const name=document.getElementById("studentName").value.trim();
-const sid=document.getElementById("studentId").value.trim();
-const equipment=document.getElementById("equipment").value;
-const date=document.getElementById("date").value;
-const msg=document.getElementById("studentMessage");
-if(!name||!sid||!date){msg.textContent="Please complete all fields.";return;}
-if(!items.length){msg.textContent="No equipment is listed.";return;}
-if(new Date(date+"T00:00:00")<new Date(new Date().toDateString())){msg.textContent="Please choose today or a future date.";return;}
-const item=items.find(x=>x.name===equipment);
-const borrowed=records.filter(r=>r.equipment===equipment&&r.status==="Borrowed").length;
-const pending=records.filter(r=>r.equipment===equipment&&["Pending","Approved"].includes(r.status)).length;
-if(!item||item.qty-borrowed-pending<=0){msg.textContent="No available quantity for this equipment.";return;}
-records.push({id:nextId++,name,sid,equipment,date,status:"Pending"});
-msg.textContent="Reservation submitted! Waiting for admin approval.";
-document.getElementById("studentName").value="";
-document.getElementById("studentId").value="";
-render();
+function status(id,s){
+let r=requests.find(r=>r.id===id);if(!r)return;
+if(s==="Borrowed"){
+let x=equipment.find(x=>x.name===r.item);
+if(!x||r.qty>available(x)){alert("Insufficient available quantity.");return}
 }
-
-function changeStatus(id,status){
-const r=records.find(x=>x.id===id);
-if(!r)return;
-if(status==="Borrowed"){
-const item=items.find(x=>x.name===r.equipment);
-const borrowed=records.filter(x=>x.equipment===r.equipment&&x.status==="Borrowed").length;
-if(!item||borrowed>=item.qty){alert("No available quantity to lend.");return;}
+r.status=s;render();
 }
-r.status=status;
-render();
+function returned(id){
+let r=requests.find(r=>r.id===id);if(!r)return;
+r.status="Returned";r.returned=today();render();
 }
-
-function myRecords(){
-const sid=document.getElementById("searchId").value.trim();
-const found=records.filter(r=>r.sid===sid);
-document.getElementById("myRecords").innerHTML=found.length?
-found.map(r=>`<p>${r.equipment} — ${r.date} — <span class="status">${r.status}</span></p>`).join("")
-:"No records found for that Student ID.";
+function lookup(){
+let id=document.getElementById("lookup").value.trim();
+let found=requests.filter(r=>r.sid===id);
+document.getElementById("mine").innerHTML=found.length?found.map(r=>`<div class="card"><b>${r.item}</b> — Qty: ${r.qty}<p>Reservation: ${r.date}</p><p>Expected return: ${r.due}</p><p>Status: ${r.status}</p>${r.returned?"Actual return: "+r.returned:""}</div>`).join(""):"No records found.";
 }
-
-function addEquipment(){
-const name=document.getElementById("newName").value.trim();
-const qty=Number(document.getElementById("newQty").value);
-if(!name||document.getElementById("newQty").value===""||!Number.isInteger(qty)||qty<0){alert("Enter an equipment name and a valid quantity.");return;}
-if(items.some(x=>x.name.toLowerCase()===name.toLowerCase())){alert("Equipment already exists.");return;}
-items.push({name,qty});
-document.getElementById("newName").value="";
-document.getElementById("newQty").value="";
-render();
+function addItem(){
+let name=document.getElementById("newName").value.trim(),qty=Number(document.getElementById("newQty").value);
+if(!name||document.getElementById("newQty").value===""||!Number.isInteger(qty)||qty<0){alert("Enter a name and valid quantity.");return}
+if(equipment.some(x=>x.name.toLowerCase()===name.toLowerCase())){alert("Equipment already exists.");return}
+equipment.push({name,total:qty,condition:"Good"});
+document.getElementById("newName").value="";document.getElementById("newQty").value="";render();
 }
-
-function removeEquipment(i){
-if(records.some(r=>r.equipment===items[i].name&&["Pending","Approved","Borrowed"].includes(r.status))){alert("Cannot remove equipment with active reservations or borrowing records.");return;}
-if(confirm("Remove this equipment?")){items.splice(i,1);render();}
+function condition(i,c){equipment[i].condition=c;render()}
+function removeItem(i){
+if(requests.some(r=>r.item===equipment[i].name&&["Pending","Approved","Borrowed"].includes(r.status))){alert("Cannot remove equipment with active records.");return}
+if(confirm("Remove equipment?")){equipment.splice(i,1);render()}
 }
-
 render();
 </script>
 </body>
