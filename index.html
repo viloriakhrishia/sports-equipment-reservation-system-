@@ -625,15 +625,3 @@ document.getElementById("adminRows").addEventListener("click",function(event){
  saveData();
  refreshAll();
 });
-
-/* RESET DEMO DATA */
-document.getElementById("resetDemo").addEventListener("click",function(){
- if(!currentUser||currentUser.role!=="admin"){
-  alert("Admin access only.");
-  return;
- }
-
- if(!confirm("Are you sure you want to reset all demo data?"))return;
-
- equipment=defaultEquipment.map(item=>({...item}));
- 
