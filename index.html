@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sports Equipment Management System</title>
+<title>Sports Equipment Reservation and Management System</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#202b3c}
@@ -34,140 +35,400 @@ th{background:#edf3fa}
 .notice{padding:12px;border-radius:7px;background:#eaf4ff;margin-bottom:12px}
 .danger{background:#b52e37}
 footer{text-align:center;padding:22px;color:#66758a;font-size:13px}
+
+/* LOGIN PAGE */
+#loginPage{
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ background:#eef3f9;
+}
+.login-card{
+ width:100%;
+ max-width:400px;
+ background:white;
+ padding:28px;
+ border-radius:14px;
+ box-shadow:0 4px 18px #00000015;
+}
+.login-card h2{
+ text-align:center;
+ color:#123d70;
+}
+.login-card p{
+ text-align:center;
+ color:#66758a;
+ font-size:14px;
+}
+.login-card button{
+ width:100%;
+}
+#loginMessage{
+ color:#b52e37;
+ text-align:center;
+}
+.demo-accounts{
+ background:#edf3fa;
+ padding:12px;
+ border-radius:8px;
+ margin-top:15px;
+}
+.demo-accounts p{
+ margin:6px 0;
+}
+
+/* LOGIN STATUS */
+#appShell{display:none}
+#loginStatusBox{
+ background:#e5f7ec;
+ color:#176a38;
+ padding:12px 16px;
+ display:flex;
+ flex-wrap:wrap;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ font-size:13px;
+}
+#logoutButton{
+ background:#b52e37;
+ padding:8px 13px;
+}
 </style>
 </head>
+
 <body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+ <div class="login-card">
+  <h2>🏅 Sports Equipment System</h2>
+  <p>Reservation, Borrowing and Inventory Management</p>
+
+  <form id="loginForm">
+
+   <label for="loginRole">Account Type</label>
+   <select id="loginRole" required>
+    <option value="student">Student</option>
+    <option value="admin">Admin</option>
+   </select>
+
+   <label for="loginUsername">Username</label>
+   <input id="loginUsername" type="text" placeholder="Enter username" required>
+
+   <label for="loginPassword">Password</label>
+   <input id="loginPassword" type="password" placeholder="Enter password" required>
+
+   <button type="submit" class="primary">Login</button>
+   <p id="loginMessage" role="alert"></p>
+  </form>
+
+  <div class="demo-accounts">
+   <p><b>Demo Student Account</b></p>
+   <p>Username: student</p>
+   <p>Password: student123</p>
+   <hr>
+   <p><b>Demo Admin Account</b></p>
+   <p>Username: admin</p>
+   <p>Password: admin123</p>
+  </div>
+ </div>
+</div>
+
+<!-- MAIN SYSTEM -->
+<div id="appShell">
+
 <header>
-<h1>🏅 Sports Equipment Management</h1>
-<p>Reservation, Borrowing and Inventory System</p>
+ <h1>🏅 Sports Equipment Management</h1>
+ <p>Reservation, Borrowing and Inventory System</p>
 </header>
 
+<!-- LOGIN STATUS -->
+<div id="loginStatusBox">
+ <span>
+  Login Status: <strong>Logged In</strong> |
+  Account: <strong id="currentAccount">Student</strong> |
+  Session: <strong>Active</strong>
+ </span>
+ <button type="button" id="logoutButton">Logout</button>
+</div>
+
 <nav>
-<button class="active" data-page="dashboard">Dashboard</button>
-<button data-page="inventory">Inventory</button>
-<button data-page="reserve">Reserve Equipment</button>
-<button data-page="reservations">Reservations</button>
-<button data-page="admin">Admin Management</button>
+ <button class="active" data-page="dashboard">Dashboard</button>
+ <button data-page="inventory">Inventory</button>
+ <button data-page="reserve">Reserve Equipment</button>
+ <button data-page="reservations">Reservations</button>
+ <button data-page="admin" id="adminNav">Admin Management</button>
 </nav>
 
 <main>
+
+<!-- DASHBOARD -->
 <section id="dashboard" class="page active">
-<h2>Dashboard</h2>
-<p class="muted">Welcome to the Sports Equipment Management System.</p>
-<div class="stats">
-<div class="card stat">Equipment Items<strong id="totalItems">0</strong></div>
-<div class="card stat">Available<strong id="availableItems">0</strong></div>
-<div class="card stat">Reservations<strong id="totalReservations">0</strong></div>
-<div class="card stat">Pending Requests<strong id="pendingRequests">0</strong></div>
-</div>
-<div class="card">
-<h3>System Overview</h3>
-<p>Check equipment availability, submit reservation requests, and monitor borrowed and returned items.</p>
-<button class="primary" data-go="inventory">View Inventory</button>
-<button data-go="reserve">Make a Reservation</button>
-</div>
+ <h2>Dashboard</h2>
+ <p class="muted">Welcome to the Sports Equipment Management System.</p>
+
+ <div class="stats">
+  <div class="card stat">Equipment Items<strong id="totalItems">0</strong></div>
+  <div class="card stat">Available<strong id="availableItems">0</strong></div>
+  <div class="card stat">Reservations<strong id="totalReservations">0</strong></div>
+  <div class="card stat">Pending Requests<strong id="pendingRequests">0</strong></div>
+ </div>
+
+ <div class="card">
+  <h3>System Overview</h3>
+  <p>Check equipment availability, submit reservation requests, and monitor borrowed and returned items.</p>
+  <button class="primary" data-go="inventory">View Inventory</button>
+  <button data-go="reserve">Make a Reservation</button>
+ </div>
 </section>
 
+<!-- INVENTORY -->
 <section id="inventory" class="page">
-<h2>Sports Equipment Inventory</h2>
-<div class="card">
-<label for="searchEquipment">Search equipment</label>
-<input id="searchEquipment" placeholder="Search by equipment name..." />
-<div class="tablewrap">
-<table>
-<thead><tr><th>Equipment</th><th>Category</th><th>Total</th><th>Available</th><th>Status</th></tr></thead>
-<tbody id="inventoryRows"></tbody>
-</table>
-</div>
-</div>
+ <h2>Sports Equipment Inventory</h2>
+
+ <div class="card">
+  <label for="searchEquipment">Search equipment</label>
+  <input id="searchEquipment" placeholder="Search by equipment name..." />
+
+  <div class="tablewrap">
+   <table>
+    <thead>
+     <tr>
+      <th>Equipment</th>
+      <th>Category</th>
+      <th>Total</th>
+      <th>Available</th>
+      <th>Status</th>
+     </tr>
+    </thead>
+    <tbody id="inventoryRows"></tbody>
+   </table>
+  </div>
+ </div>
 </section>
 
+<!-- RESERVE EQUIPMENT -->
 <section id="reserve" class="page">
-<h2>Reserve Equipment</h2>
-<div class="card">
-<div class="notice">Complete the form to submit a reservation request. Staff approval is required.</div>
-<form id="reservationForm">
-<div class="formgrid">
-<div><label for="studentName">Student Name *</label><input id="studentName" required placeholder="Enter your full name"></div>
-<div><label for="studentId">Student ID *</label><input id="studentId" required placeholder="Enter your student ID"></div>
-<div><label for="equipmentSelect">Equipment *</label><select id="equipmentSelect" required></select></div>
-<div><label for="quantity">Quantity *</label><input id="quantity" type="number" min="1" value="1" required></div>
-<div><label for="reserveDate">Reservation Date *</label><input id="reserveDate" type="date" required></div>
-<div><label for="returnDate">Expected Return Date *</label><input id="returnDate" type="date" required></div>
-</div>
-<label for="purpose">Purpose</label>
-<textarea id="purpose" rows="3" placeholder="Example: Physical Education class"></textarea>
-<button type="submit" class="primary">Submit Reservation</button>
-<button type="reset">Clear Form</button>
-</form>
-<p id="formMessage" role="status"></p>
-</div>
+ <h2>Reserve Equipment</h2>
+
+ <div class="card">
+  <div class="notice">Complete the form to submit a reservation request. Staff approval is required.</div>
+
+  <form id="reservationForm">
+   <div class="formgrid">
+    <div>
+     <label for="studentName">Student Name *</label>
+     <input id="studentName" required placeholder="Enter your full name">
+    </div>
+
+    <div>
+     <label for="studentId">Student ID *</label>
+     <input id="studentId" required placeholder="Enter your student ID">
+    </div>
+
+    <div>
+     <label for="equipmentSelect">Equipment *</label>
+     <select id="equipmentSelect" required></select>
+    </div>
+
+    <div>
+     <label for="quantity">Quantity *</label>
+     <input id="quantity" type="number" min="1" value="1" required>
+    </div>
+
+    <div>
+     <label for="reserveDate">Reservation Date *</label>
+     <input id="reserveDate" type="date" required>
+    </div>
+
+    <div>
+     <label for="returnDate">Expected Return Date *</label>
+     <input id="returnDate" type="date" required>
+    </div>
+   </div>
+
+   <label for="purpose">Purpose</label>
+   <textarea id="purpose" rows="3" placeholder="Example: Physical Education class"></textarea>
+
+   <button type="submit" class="primary">Submit Reservation</button>
+   <button type="reset">Clear Form</button>
+  </form>
+
+  <p id="formMessage" role="status"></p>
+ </div>
 </section>
 
+<!-- RESERVATION RECORDS -->
 <section id="reservations" class="page">
-<h2>Reservation Records</h2>
-<div class="card">
-<div class="tablewrap">
-<table>
-<thead><tr><th>Student</th><th>Equipment</th><th>Qty</th><th>Date</th><th>Return</th><th>Status</th></tr></thead>
-<tbody id="reservationRows"></tbody>
-</table>
-</div>
-<p class="muted">Reservation requests appear here after submission.</p>
-</div>
+ <h2>Reservation Records</h2>
+
+ <div class="card">
+  <div class="tablewrap">
+   <table>
+    <thead>
+     <tr>
+      <th>Student</th>
+      <th>Equipment</th>
+      <th>Qty</th>
+      <th>Date</th>
+      <th>Return</th>
+      <th>Status</th>
+     </tr>
+    </thead>
+    <tbody id="reservationRows"></tbody>
+   </table>
+  </div>
+
+  <p class="muted">Reservation requests appear here after submission.</p>
+ </div>
 </section>
 
+<!-- ADMIN MANAGEMENT -->
 <section id="admin" class="page">
-<h2>Admin Management</h2>
-<div class="card">
-<h3>Add Equipment</h3>
-<form id="equipmentForm">
-<label for="newEquipment">Equipment Name *</label>
-<input id="newEquipment" required placeholder="Example: Basketball">
-<div class="formgrid">
-<div><label for="newCategory">Category *</label><input id="newCategory" required placeholder="Example: Ball"></div>
-<div><label for="newQuantity">Quantity *</label><input id="newQuantity" type="number" min="1" value="1" required></div>
-</div>
-<button type="submit">Add Equipment</button>
-</form>
-<p id="equipmentMessage" role="status"></p>
-</div>
-<div class="card">
-<h3>Manage Requests</h3>
-<p class="muted">Approve or reject pending requests. Mark approved equipment as borrowed or returned.</p>
-<div class="tablewrap">
-<table>
-<thead><tr><th>Student</th><th>Equipment</th><th>Status</th><th>Actions</th></tr></thead>
-<tbody id="adminRows"></tbody>
-</table>
-</div>
-</div>
-<div class="card">
-<h3>Data Management</h3>
-<p class="muted">This demo stores records in this browser only.</p>
-<button id="resetDemo" class="danger" type="button">Reset Demo Data</button>
-</div>
+ <h2>Admin Management</h2>
+
+ <div class="card">
+  <h3>Add Equipment</h3>
+
+  <form id="equipmentForm">
+   <label for="newEquipment">Equipment Name *</label>
+   <input id="newEquipment" required placeholder="Example: Basketball">
+
+   <div class="formgrid">
+    <div>
+     <label for="newCategory">Category *</label>
+     <input id="newCategory" required placeholder="Example: Ball">
+    </div>
+
+    <div>
+     <label for="newQuantity">Quantity *</label>
+     <input id="newQuantity" type="number" min="1" value="1" required>
+    </div>
+   </div>
+
+   <button type="submit">Add Equipment</button>
+  </form>
+
+  <p id="equipmentMessage" role="status"></p>
+ </div>
+
+ <div class="card">
+  <h3>Manage Requests</h3>
+  <p class="muted">Approve or reject pending requests. Mark approved equipment as borrowed or returned.</p>
+
+  <div class="tablewrap">
+   <table>
+    <thead>
+     <tr>
+      <th>Student</th>
+      <th>Equipment</th>
+      <th>Status</th>
+      <th>Actions</th>
+     </tr>
+    </thead>
+    <tbody id="adminRows"></tbody>
+   </table>
+  </div>
+ </div>
+
+ <div class="card">
+  <h3>Data Management</h3>
+  <p class="muted">This demo stores records in this browser only.</p>
+  <button id="resetDemo" class="danger" type="button">Reset Demo Data</button>
+ </div>
 </section>
+
 </main>
+
 <footer>Sports Equipment Reservation and Management System · Student Project Prototype</footer>
+
+</div>
 
 <script>
 (function(){
 "use strict";
+
+/* DEFAULT EQUIPMENT */
 const defaultEquipment=[
-{id:1,name:"Basketball",category:"Ball",total:10},
-{id:2,name:"Volleyball",category:"Ball",total:8},
-{id:3,name:"Badminton Racket",category:"Racket",total:12},
-{id:4,name:"Soccer Ball",category:"Ball",total:6},
-{id:5,name:"Volleyball Net",category:"Net",total:3}
+ {id:1,name:"Basketball",category:"Ball",total:10},
+ {id:2,name:"Volleyball",category:"Ball",total:8},
+ {id:3,name:"Badminton Racket",category:"Racket",total:12},
+ {id:4,name:"Soccer Ball",category:"Ball",total:6},
+ {id:5,name:"Volleyball Net",category:"Net",total:3}
 ];
+
 const STORAGE_KEY="sportsEquipmentSystemV2";
+
 let equipment=[];
 let reservations=[];
+let currentUser=null;
 
+/* LOGIN FUNCTIONS */
+function openSystem(user){
+ currentUser=user;
+
+ document.getElementById("loginPage").style.display="none";
+ document.getElementById("appShell").style.display="block";
+
+ document.getElementById("currentAccount").textContent=
+  user.role==="admin"?"Admin":"Student";
+
+ document.getElementById("adminNav").style.display=
+  user.role==="admin"?"inline-block":"none";
+
+ showPage("dashboard");
+}
+
+document.getElementById("loginForm").addEventListener("submit",function(event){
+ event.preventDefault();
+
+ const role=document.getElementById("loginRole").value;
+ const username=document.getElementById("loginUsername").value.trim();
+ const password=document.getElementById("loginPassword").value;
+
+ const validStudent=
+  role==="student" &&
+  username==="student" &&
+  password==="student123";
+
+ const validAdmin=
+  role==="admin" &&
+  username==="admin" &&
+  password==="admin123";
+
+ if(!validStudent && !validAdmin){
+  document.getElementById("loginMessage").textContent=
+   "Incorrect username or password. Please try again.";
+  return;
+ }
+
+ const user={username,role};
+
+ sessionStorage.setItem("sportsSystemUser",JSON.stringify(user));
+
+ document.getElementById("loginMessage").textContent="";
+ openSystem(user);
+});
+
+document.getElementById("logoutButton").addEventListener("click",function(){
+ sessionStorage.removeItem("sportsSystemUser");
+ currentUser=null;
+
+ document.getElementById("appShell").style.display="none";
+ document.getElementById("loginPage").style.display="flex";
+
+ document.getElementById("loginForm").reset();
+ document.getElementById("loginMessage").textContent="";
+});
+
+/* DATA FUNCTIONS */
 function loadData(){
  try{
   const saved=localStorage.getItem(STORAGE_KEY);
+
   if(saved){
    const data=JSON.parse(saved);
    equipment=Array.isArray(data.equipment)?data.equipment:defaultEquipment.map(x=>({...x}));
@@ -181,6 +442,7 @@ function loadData(){
   reservations=[];
  }
 }
+
 function saveData(){
  try{
   localStorage.setItem(STORAGE_KEY,JSON.stringify({equipment,reservations}));
@@ -188,72 +450,159 @@ function saveData(){
   console.warn("Browser storage is unavailable.",error);
  }
 }
+
 function escapeHTML(value){
  return String(value??"").replace(/[&<>"']/g,function(ch){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
  });
 }
+
 function getEquipment(id){
  return equipment.find(item=>item.id===Number(id));
 }
+
 function reservedQuantity(itemId){
  return reservations
- .filter(r=>Number(r.equipmentId)===Number(itemId)&&["Pending","Approved","Borrowed"].includes(r.status))
- .reduce((sum,r)=>sum+Number(r.quantity||0),0);
+  .filter(r=>Number(r.equipmentId)===Number(itemId)&&["Pending","Approved","Borrowed"].includes(r.status))
+  .reduce((sum,r)=>sum+Number(r.quantity||0),0);
 }
+
 function availableQuantity(item){
  return Math.max(0,Number(item.total)-reservedQuantity(item.id));
 }
+
+/* PAGE NAVIGATION */
 function showPage(id){
- document.querySelectorAll(".page").forEach(page=>page.classList.toggle("active",page.id===id));
- document.querySelectorAll("nav [data-page]").forEach(button=>button.classList.toggle("active",button.dataset.page===id));
+ if(!currentUser)return;
+
+ if(id==="admin"&&currentUser.role!=="admin"){
+  alert("Admin access only.");
+  return;
+ }
+
+ document.querySelectorAll(".page").forEach(page=>
+  page.classList.toggle("active",page.id===id)
+ );
+
+ document.querySelectorAll("nav [data-page]").forEach(button=>
+  button.classList.toggle("active",button.dataset.page===id)
+ );
+
  if(id==="reserve")renderEquipmentOptions();
+
  window.scrollTo({top:0,behavior:"smooth"});
 }
+
+document.querySelectorAll("[data-page]").forEach(button=>{
+ button.addEventListener("click",()=>showPage(button.dataset.page));
+});
+
+document.querySelectorAll("[data-go]").forEach(button=>{
+ button.addEventListener("click",()=>showPage(button.dataset.go));
+});
+
+/* DASHBOARD */
 function renderDashboard(){
- document.getElementById("totalItems").textContent=equipment.reduce((sum,item)=>sum+Number(item.total),0);
- document.getElementById("availableItems").textContent=equipment.reduce((sum,item)=>sum+availableQuantity(item),0);
- document.getElementById("totalReservations").textContent=reservations.length;
- document.getElementById("pendingRequests").textContent=reservations.filter(r=>r.status==="Pending").length;
+ document.getElementById("totalItems").textContent=
+  equipment.reduce((sum,item)=>sum+Number(item.total),0);
+
+ document.getElementById("availableItems").textContent=
+  equipment.reduce((sum,item)=>sum+availableQuantity(item),0);
+
+ document.getElementById("totalReservations").textContent=
+  reservations.length;
+
+ document.getElementById("pendingRequests").textContent=
+  reservations.filter(r=>r.status==="Pending").length;
 }
+
+/* INVENTORY */
 function renderInventory(){
  const query=document.getElementById("searchEquipment").value.trim().toLowerCase();
- const rows=equipment.filter(item=>(item.name+" "+item.category).toLowerCase().includes(query));
- document.getElementById("inventoryRows").innerHTML=rows.length?rows.map(item=>{
-  const available=availableQuantity(item);
-  return `<tr><td>${escapeHTML(item.name)}</td><td>${escapeHTML(item.category)}</td><td>${item.total}</td><td>${available}</td><td><span class="status">${available>0?"Available":"Unavailable"}</span></td></tr>`;
- }).join(""):'<tr><td colspan="5">No equipment found.</td></tr>';
+
+ const rows=equipment.filter(item=>
+  (item.name+" "+item.category).toLowerCase().includes(query)
+ );
+
+ document.getElementById("inventoryRows").innerHTML=
+  rows.length?rows.map(item=>{
+   const available=availableQuantity(item);
+
+   return `<tr>
+    <td>${escapeHTML(item.name)}</td>
+    <td>${escapeHTML(item.category)}</td>
+    <td>${item.total}</td>
+    <td>${available}</td>
+    <td><span class="status">${available>0?"Available":"Unavailable"}</span></td>
+   </tr>`;
+  }).join(""):'<tr><td colspan="5">No equipment found.</td></tr>';
 }
+
+/* EQUIPMENT OPTIONS */
 function renderEquipmentOptions(){
  const select=document.getElementById("equipmentSelect");
  const previous=select.value;
- select.innerHTML='<option value="">Choose equipment</option>'+equipment.map(item=>
-  `<option value="${item.id}" ${availableQuantity(item)<1?"disabled":""}>${escapeHTML(item.name)} (${availableQuantity(item)} available)</option>`
- ).join("");
- if(previous&&getEquipment(previous)&&availableQuantity(getEquipment(previous))>0)select.value=previous;
+
+ select.innerHTML=
+  '<option value="">Choose equipment</option>'+
+  equipment.map(item=>
+   `<option value="${item.id}" ${availableQuantity(item)<1?"disabled":""}>
+    ${escapeHTML(item.name)} (${availableQuantity(item)} available)
+   </option>`
+  ).join("");
+
+ if(previous&&getEquipment(previous)&&availableQuantity(getEquipment(previous))>0){
+  select.value=previous;
+ }
 }
+
+/* RESERVATION RECORDS */
 function renderReservations(){
  const rows=document.getElementById("reservationRows");
- rows.innerHTML=reservations.length?reservations.slice().reverse().map(r=>
-  `<tr><td>${escapeHTML(r.studentName)}<br><small>${escapeHTML(r.studentId)}</small></td><td>${escapeHTML(r.equipmentName)}</td><td>${r.quantity}</td><td>${escapeHTML(r.reserveDate)}</td><td>${escapeHTML(r.returnDate)}</td><td>${escapeHTML(r.status)}</td></tr>`
- ).join(""):'<tr><td colspan="6">No reservations yet.</td></tr>';
+
+ rows.innerHTML=reservations.length?
+  reservations.slice().reverse().map(r=>
+   `<tr>
+    <td>${escapeHTML(r.studentName)}<br><small>${escapeHTML(r.studentId)}</small></td>
+    <td>${escapeHTML(r.equipmentName)}</td>
+    <td>${r.quantity}</td>
+    <td>${escapeHTML(r.reserveDate)}</td>
+    <td>${escapeHTML(r.returnDate)}</td>
+    <td>${escapeHTML(r.status)}</td>
+   </tr>`
+  ).join(""):'<tr><td colspan="6">No reservations yet.</td></tr>';
 }
+
+/* ADMIN REQUEST MANAGEMENT */
 function renderAdmin(){
  const rows=document.getElementById("adminRows");
- rows.innerHTML=reservations.length?reservations.slice().reverse().map(r=>{
-  let actions="";
-  if(r.status==="Pending"){
-   actions=`<button class="smallbtn" data-action="approve" data-id="${r.id}">Approve</button><button class="smallbtn danger" data-action="reject" data-id="${r.id}">Reject</button>`;
-  }else if(r.status==="Approved"){
-   actions=`<button class="smallbtn" data-action="borrow" data-id="${r.id}">Mark Borrowed</button>`;
-  }else if(r.status==="Borrowed"){
-   actions=`<button class="smallbtn" data-action="return" data-id="${r.id}">Mark Returned</button>`;
-  }else{
-   actions="—";
-  }
-  return `<tr><td>${escapeHTML(r.studentName)}</td><td>${escapeHTML(r.equipmentName)} (${r.quantity})</td><td>${escapeHTML(r.status)}</td><td>${actions}</td></tr>`;
- }).join(""):'<tr><td colspan="4">No requests to manage.</td></tr>';
+
+ rows.innerHTML=reservations.length?
+  reservations.slice().reverse().map(r=>{
+   let actions="";
+
+   if(r.status==="Pending"){
+    actions=
+     `<button class="smallbtn" data-action="approve" data-id="${r.id}">Approve</button>
+      <button class="smallbtn danger" data-action="reject" data-id="${r.id}">Reject</button>`;
+   }else if(r.status==="Approved"){
+    actions=`<button class="smallbtn" data-action="borrow" data-id="${r.id}">Mark Borrowed</button>`;
+   }else if(r.status==="Borrowed"){
+    actions=`<button class="smallbtn" data-action="return" data-id="${r.id}">Mark Returned</button>`;
+   }else{
+    actions="—";
+   }
+
+   return `<tr>
+    <td>${escapeHTML(r.studentName)}</td>
+    <td>${escapeHTML(r.equipmentName)} (${r.quantity})</td>
+    <td>${escapeHTML(r.status)}</td>
+    <td>${actions}</td>
+   </tr>`;
+  }).join(""):'<tr><td colspan="4">No requests to manage.</td></tr>';
 }
+
+/* REFRESH ALL DATA */
 function refreshAll(){
  renderDashboard();
  renderInventory();
@@ -261,16 +610,18 @@ function refreshAll(){
  renderReservations();
  renderAdmin();
 }
-document.querySelectorAll("[data-page]").forEach(button=>{
- button.addEventListener("click",()=>showPage(button.dataset.page));
-});
-document.querySelectorAll("[data-go]").forEach(button=>{
- button.addEventListener("click",()=>showPage(button.dataset.go));
-});
+
 document.getElementById("searchEquipment").addEventListener("input",renderInventory);
 
+/* RESERVATION FORM */
 document.getElementById("reservationForm").addEventListener("submit",function(event){
  event.preventDefault();
+
+ if(!currentUser||currentUser.role!=="student"){
+  alert("Please log in as a student to make a reservation.");
+  return;
+ }
+
  const studentName=document.getElementById("studentName").value.trim();
  const studentId=document.getElementById("studentId").value.trim();
  const equipmentId=Number(document.getElementById("equipmentSelect").value);
@@ -279,80 +630,94 @@ document.getElementById("reservationForm").addEventListener("submit",function(ev
  const returnDate=document.getElementById("returnDate").value;
  const item=getEquipment(equipmentId);
  const message=document.getElementById("formMessage");
+
  if(!studentName||!studentId||!item||!reserveDate||!returnDate){
   message.textContent="Please complete all required fields.";
   return;
  }
+
  if(returnDate<reserveDate){
   message.textContent="Return date must be the same as or later than reservation date.";
   return;
  }
+
  if(!Number.isInteger(quantity)||quantity<1){
   message.textContent="Please enter a valid quantity.";
   return;
  }
+
  if(quantity>availableQuantity(item)){
   message.textContent="Not enough equipment is available. Please reduce the quantity.";
   return;
  }
+
  reservations.push({
-  id:Date.now(),studentName,studentId,equipmentId:item.id,
-  equipmentName:item.name,quantity,reserveDate,returnDate,
-  purpose:document.getElementById("purpose").value.trim(),status:"Pending"
+  id:Date.now(),
+  studentName,
+  studentId,
+  equipmentId:item.id,
+  equipmentName:item.name,
+  quantity,
+  reserveDate,
+  returnDate,
+  purpose:document.getElementById("purpose").value.trim(),
+  status:"Pending"
  });
+
  saveData();
  refreshAll();
  this.reset();
+
  document.getElementById("quantity").value="1";
  message.textContent="Reservation submitted successfully! Waiting for staff approval.";
 });
 
+/* ADD EQUIPMENT */
 document.getElementById("equipmentForm").addEventListener("submit",function(event){
  event.preventDefault();
+
+ if(!currentUser||currentUser.role!=="admin"){
+  alert("Admin access only.");
+  return;
+ }
+
  const name=document.getElementById("newEquipment").value.trim();
  const category=document.getElementById("newCategory").value.trim();
  const total=Number(document.getElementById("newQuantity").value);
+
  if(!name||!category||!Number.isInteger(total)||total<1){
   document.getElementById("equipmentMessage").textContent="Please enter valid equipment details.";
   return;
  }
+
  if(equipment.some(item=>item.name.toLowerCase()===name.toLowerCase())){
   document.getElementById("equipmentMessage").textContent="This equipment already exists. Please use a different name.";
   return;
  }
+
  equipment.push({id:Date.now(),name,category,total});
+
  saveData();
  refreshAll();
  this.reset();
+
  document.getElementById("newQuantity").value="1";
  document.getElementById("equipmentMessage").textContent="Equipment added successfully.";
 });
 
+/* APPROVE, REJECT, BORROW AND RETURN */
 document.getElementById("adminRows").addEventListener("click",function(event){
  const button=event.target.closest("button[data-action]");
- if(!button)return;
- const reservation=reservations.find(r=>r.id===Number(button.dataset.id));
- if(!reservation)return;
- const action=button.dataset.action;
- if(action==="approve")reservation.status="Approved";
- else if(action==="reject")reservation.status="Rejected";
- else if(action==="borrow")reservation.status="Borrowed";
- else if(action==="return")reservation.status="Returned";
- else return;
- saveData();
- refreshAll();
-});
-document.getElementById("resetDemo").addEventListener("click",function(){
- if(!confirm("Delete all saved demo reservations and restore the original equipment list?"))return;
- equipment=defaultEquipment.map(item=>({...item}));
- reservations=[];
- saveData();
- refreshAll();
-});
-loadData();
-refreshAll();
-})();
-</script>
-</body>
-</html>
 
+ if(!button)return;
+
+ if(!currentUser||currentUser.role!=="admin"){
+  alert("Admin access only.");
+  return;
+ }
+
+ const reservation=reservations.find(r=>r.id===Number(button.dataset.id));
+
+ if(!reservation)return;
+
+ const action=button.da
